@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import scrolledtext 
 from cx_Oracle import *
 from tkinter import messagebox
+import matplotlib.pyplot as plt
 root = Tk()
 root.title("Student Management Record")
 root.geometry("550x450+200+200")
@@ -81,6 +82,8 @@ def f1():
 def f2():
 	adds.withdraw()
 	root.deiconify()
+
+
 
 def f3():
 	
@@ -220,12 +223,47 @@ def f11():
 	delt.withdraw()
 	root.deiconify()
 
+def f12():
+	# root.withdraw()
+	# graph.deiconify()
+	try:
+		con =connect('system/abc123')
+		cursor = con.cursor()
+		sql = "select * from SMS "
+		cursor.execute(sql)
+		data = cursor.fetchall()
+		rollno=[]
+		marks1=[]
+		for i in data:
+			rollno.append(str(i[0]))
+			marks1.append(i[2])
+		# messagebox.showerror("output",rollno)
+		# messagebox.showerror("output",marks1)
+		# fig = plt.figure()
+		# ax = fig.add_axes([0,0,1,1])
+		plt.bar(rollno,marks1)
+		plt.xlabel("Roll No")
+		plt.ylabel("Marks")
+		plt.title("Marks of all Roll Numbers")
+		plt.show()
+	except DatabaseError as e :
+
+		messagebox.showerror("issue",e)
+
+	finally :
+		if con is not None :
+			con.close()
+
+def f13():
+	graph.withdraw()
+	root.deiconify()
+
 
 btnAdd= Button(root, text="Add", width=10, command=f1,font=('arial' , 16 ,'bold italic '))
 btnView=Button(root, text="View", width=10, command=f3,font=('arial' , 16 ,'bold italic '))
 btnUpdate=Button(root, text="Update", width=10, command=f6,font=('arial' , 16 ,'bold italic '))
 btnDelete=Button(root, text="Delete", width=10, command=f7,font=('arial' , 16 ,'bold italic '))
-btnGraph=Button(root, text="Graph", width=10,font=('arial' , 16 ,'bold italic '))
+btnGraph=Button(root, text="Graph", width=10, command=f12,font=('arial' , 16 ,'bold italic '))
 lbcity=Label(root, text= "City:",font=('arial'))
 lbcval=Label(root, text=fun1())
 lbtemp=Label(root, text="Temperature =",font=('arial' ))
@@ -360,5 +398,16 @@ btndelSave.pack(pady=10)
 btndelBack.pack(pady=10)
 
 delt.withdraw()
+
+graph = Toplevel(root)
+graph.title("graph")
+graph.geometry("550x550+200+200")
+
+btngraphBack = Button(graph , text = "Back" ,font=('arial' , 16 ,'bold italic ') ,command = f13 )
+btngraphBack.pack(pady=10)
+
+graph.withdraw()
+
+
 
 root.mainloop()
